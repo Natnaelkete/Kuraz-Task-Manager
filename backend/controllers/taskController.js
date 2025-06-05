@@ -73,6 +73,33 @@ exports.updateTask = async (req, res) => {
   }
 };
 
+exports.markAsComplete = async (req, res) => {
+  try {
+    const task = await Task.findByIdAndUpdate(
+      req.params.id,
+      { completed: true, completedAt: Date.now() },
+      { new: true, runValidators: true }
+    );
+
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        error: "Task not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: task,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: "Server Error",
+    });
+  }
+};
+
 exports.deleteTask = async (req, res) => {
   try {
     const task = await Task.findByIdAndDelete(req.params.id);
